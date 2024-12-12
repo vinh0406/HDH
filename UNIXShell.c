@@ -136,17 +136,20 @@ void handleHistory(char **args, int background) {
         return;
     }
 
+    char history1[MAX_LINE];
+    strcpy(history1, history);
+
     if (background) {
-        if (strstr(history, "&") != NULL) {
+        if (strstr(history1, "&") != NULL) {
             printf("Error: command & &\n");
             return;
         }
     }
 
-    printf("Executing last command: %s\n", history);
+    printf("Executing last command: %s\n", history1);
 
     char *historyArgs[MAX_LINE / 2 + 1];
-    parseInput(history, historyArgs);
+    parseInput(history1, historyArgs);
 
     for (int i = 0; historyArgs[i] != NULL; i++) {
         if (strcmp(historyArgs[i], "&") == 0) {
@@ -170,7 +173,7 @@ void handleHistory(char **args, int background) {
 
         memcpy(args1, historyArgs, pipeIndex * sizeof(char *));
         args1[pipeIndex] = NULL;
-        parseInput(history + (historyArgs[pipeIndex + 1] - history), args2);
+        parseInput(history1 + (historyArgs[pipeIndex + 1] - history1), args2);
 
         executePipe(args1, args2, background);
     } else {
@@ -223,10 +226,10 @@ int main(void) {
                 }
             }
 
-        if (strcmp(args[0], "!!") == 0) {  
+        if (strcmp(args[0], "!!") == 0) {
             handleHistory(args, background);
-        } else if (pipeIndex != -1) { 
-            args[pipeIndex] = NULL; 
+        } else if (pipeIndex != -1) {
+            args[pipeIndex] = NULL;
             char *args1[MAX_LINE / 2 + 1];
             char *args2[MAX_LINE / 2 + 1];
 
